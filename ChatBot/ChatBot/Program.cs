@@ -11,20 +11,17 @@ namespace ChatBot
         {
             Socket listenerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-            //Configuraxoine del serversocket
-            //serve un programma che sta in ascolto su un endpoint
+            //Configurazoine del serversocket
             IPAddress ipaddr = IPAddress.Any;
             IPEndPoint ipep = new IPEndPoint(ipaddr, 23000);
 
-            //collegamento tra listersocket e endpoint
-            //Bind: si imposta il server ad ascoltare qualunque ip su porta 23000
+            //si imposta il server ad ascoltare qualunque ip su porta 23000
             listenerSocket.Bind(ipep);
 
-            //mettere il server in ascolto
+            //server in ascolto
             listenerSocket.Listen(5);
             Console.WriteLine("Server in ascolto...");
 
-            //istruzione bloccante
             //un client si connette
             Socket client = listenerSocket.Accept();
             Console.WriteLine("CLient Connesso\n Client info: " + client.RemoteEndPoint.ToString());
@@ -36,6 +33,9 @@ namespace ChatBot
             //bytes da inviare
             int sendedBytes = 0;
 
+            //genereatore random
+            Random rnd = new Random();
+
             while (true)
             {
                 //ricezione del messaggio
@@ -44,23 +44,48 @@ namespace ChatBot
                 //traduzione dei byte in ASCII
                 string mesRicevuto = Encoding.ASCII.GetString(buff, 0, recivedBytes);
 
-                //risposte
+                //risposta in base all'input
                 string risposta = "";
-                if (mesRicevuto.ToUpper() == "QUIT")
-                    break;
-                else if (mesRicevuto.ToUpper() == "CIAO")
-                    risposta = "ciao";
-                else if (mesRicevuto.ToUpper() == "COME STAI")
-                    risposta = "Bene e tu?";
+                if (mesRicevuto.ToUpper() == "CIAO")
+                {
+                    switch (rnd.Next(3))
+                    {
+                        case 0:
+                            risposta = "Ciao";
+                            break;
+                        case 1:
+                            risposta = "Buongiorno";
+                            break;
+                        case 2:
+                            risposta = "Buonasera";
+                            break;
+                    }
+                }
+                else if (mesRicevuto.ToUpper() == "COME STAI?")
+                {
+                    switch (rnd.Next(2))
+                    {
+                        case 0:
+                            risposta = "Bene e tu?";
+                            break;
+                        case 1:
+                            risposta = "Male e tu?";
+                            break;
+                    }
+                }
+                else if (mesRicevuto.ToUpper() == "CHE FAI?")
+                    risposta = "Niente";
                 else if (mesRicevuto.ToUpper() == "BENE" || mesRicevuto.ToUpper() == "MALE")
                     risposta = "Ok!";
+                else if (mesRicevuto.ToUpper() == "QUIT")
+                    break;
                 else
                     risposta = "Non ho capito";
 
                 //pulisco il buffer
                 Array.Clear(buff, 0, buff.Length);
 
-                //Traduzione
+                //Traduzione in ascii
                 buff = Encoding.ASCII.GetBytes(risposta);
 
                 //invio del messaggio al client
