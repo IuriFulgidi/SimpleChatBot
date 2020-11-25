@@ -36,6 +36,8 @@ namespace ChatBot
             //genereatore random
             Random rnd = new Random();
 
+            //messaggio di benvenuto
+            sendedBytes = client.Send(Encoding.ASCII.GetBytes("Benvenuto!\nscirvi 'cmd' per la lista dei comandi"));
             while (true)
             {
                 //ricezione del messaggio
@@ -43,10 +45,12 @@ namespace ChatBot
 
                 //traduzione dei byte in ASCII
                 string mesRicevuto = Encoding.ASCII.GetString(buff, 0, recivedBytes);
+                mesRicevuto = mesRicevuto.ToUpper().Trim();
 
                 //risposta in base all'input
+
                 string risposta = "";
-                if (mesRicevuto.ToUpper() == "CIAO")
+                if (mesRicevuto == "CIAO")
                 {
                     switch (rnd.Next(3))
                     {
@@ -61,7 +65,7 @@ namespace ChatBot
                             break;
                     }
                 }
-                else if (mesRicevuto.ToUpper() == "COME STAI?")
+                else if (mesRicevuto == "COME STAI?")
                 {
                     switch (rnd.Next(2))
                     {
@@ -73,14 +77,18 @@ namespace ChatBot
                             break;
                     }
                 }
-                else if (mesRicevuto.ToUpper() == "CHE FAI?")
+                else if (mesRicevuto == "CHE FAI?")
                     risposta = "Niente";
-                else if (mesRicevuto.ToUpper() == "BENE" || mesRicevuto.ToUpper() == "MALE")
+                else if (mesRicevuto == "BENE" || mesRicevuto.ToUpper() == "MALE")
                     risposta = "Ok!";
-                else if (mesRicevuto.ToUpper() == "QUIT")
+                else if (mesRicevuto == "QUIT")
                     break;
+                else if (mesRicevuto == "CMD")
+                    risposta = "Posso ripondere a:\n 'Ciao', 'Come stai?' e 'Che fai?'";
                 else
                     risposta = "Non ho capito";
+
+                risposta += "\n";
 
                 //pulisco il buffer
                 Array.Clear(buff, 0, buff.Length);
